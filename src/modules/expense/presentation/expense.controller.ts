@@ -132,6 +132,12 @@ export class ExpenseController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ): Promise<any> {
+    console.log('getSummary called with userId:', userId);
+    
+    if (!userId) {
+      console.error('userId is null or undefine      GET http://localhost:3000/api/v1/expenses?category=FOODd in getSummary');
+    }
+    
     // Convert ISO strings to Date objects if provided
     const start = startDate ? new Date(startDate) : undefined;
     const end = endDate ? new Date(endDate) : undefined;

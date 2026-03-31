@@ -19,7 +19,7 @@ import {
   NotFoundException,
   ValidationException,
 } from '@core/exceptions/exceptions';
-import { InMemoryUserRepository } from '../infrastructure/in-memory-user.repository';
+import { PostgresUserRepository } from '../infrastructure/postgres-user.repository';
 import { JwtTokenService } from '../infrastructure/jwt-token.service';
 
 /**
@@ -37,7 +37,7 @@ import { JwtTokenService } from '../infrastructure/jwt-token.service';
 @Injectable()
 export class AuthUseCase implements IAuthUseCase {
   constructor(
-    private readonly userRepository: InMemoryUserRepository,
+    private readonly userRepository: PostgresUserRepository,
     private readonly tokenService: JwtTokenService,
   ) {}
 

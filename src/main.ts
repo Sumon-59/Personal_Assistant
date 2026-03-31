@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './core/exceptions/global-exception.filter';
+import { testDatabaseConnection } from './database/connection';
 
 /**
  * Application Bootstrap
@@ -46,6 +47,9 @@ async function bootstrap() {
     origin: '*',
     credentials: true,
   });
+
+  // Test database connection
+  await testDatabaseConnection();
 
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);

@@ -12,7 +12,7 @@ import {
   ExpenseSummaryResponse,
   ExpenseSummaryItem,
 } from '../domain/expense.usecase.interface';
-import { InMemoryExpenseRepository } from '../infrastructure/in-memory-expense.repository';
+import { PostgresExpenseRepository } from '../infrastructure/postgres-expense.repository';
 import {
   NotFoundException,
   ForbiddenException,
@@ -41,7 +41,7 @@ import {
 @Injectable()
 export class ExpenseUseCase implements IExpenseUseCase {
   constructor(
-    private readonly expenseRepository: InMemoryExpenseRepository,
+    private readonly expenseRepository: PostgresExpenseRepository,
   ) {}
 
   /**

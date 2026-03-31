@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ExpenseModule } from '@modules/expense/expense.module';
+import { UserModule } from '@modules/user/user.module';
 
 /**
  * Root Application Module
@@ -11,10 +12,12 @@ import { ExpenseModule } from '@modules/expense/expense.module';
  * Modules included:
  * - ConfigModule: Environment variables
  * - AuthModule: Authentication logic
+ * - UserModule: User profile management
+ * - ExpenseModule: Expense tracking
  * 
  * Why modules are organized this way:
  * - Each module is self-contained
- * - Easy to add new modules (User, Expense, Activity, etc.)
+ * - Easy to add new modules (Activity, Reports, etc.)
  * - Clear separation of concerns
  * - Dependencies flow upward
  */
@@ -25,6 +28,7 @@ import { ExpenseModule } from '@modules/expense/expense.module';
       envFilePath: '.env',
     }),
     AuthModule,
+    UserModule,
     ExpenseModule,
   ],
   controllers: [],

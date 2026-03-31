@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ExpenseController } from './presentation/expense.controller';
 import { ExpenseUseCase } from './application/expense.usecase';
-import { InMemoryExpenseRepository } from './infrastructure/in-memory-expense.repository';
+import { PostgresExpenseRepository } from './infrastructure/postgres-expense.repository';
 import { AuthModule } from '@modules/auth/auth.module';
 
 /**
@@ -46,8 +46,8 @@ import { AuthModule } from '@modules/auth/auth.module';
   controllers: [ExpenseController],
   providers: [
     ExpenseUseCase,
-    InMemoryExpenseRepository,
+    PostgresExpenseRepository,
   ],
-  exports: [ExpenseUseCase, InMemoryExpenseRepository], // Other modules can use these if needed
+  exports: [ExpenseUseCase, PostgresExpenseRepository], // Other modules can use these if needed
 })
 export class ExpenseModule {}

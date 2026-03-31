@@ -4,7 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './presentation/auth.controller';
 import { AuthUseCase } from './application/auth.usecase';
 import { JwtTokenService } from './infrastructure/jwt-token.service';
-import { InMemoryUserRepository } from './infrastructure/in-memory-user.repository';
+import { PostgresUserRepository } from './infrastructure/postgres-user.repository';
 import { JwtStrategy } from './infrastructure/jwt.strategy';
 import { JwtAuthGuard } from './infrastructure/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -52,8 +52,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     JwtTokenService,
     JwtStrategy,
     JwtAuthGuard,
-    InMemoryUserRepository,
+    PostgresUserRepository,
   ],
-  exports: [JwtAuthGuard, AuthUseCase, JwtTokenService, InMemoryUserRepository],
+  exports: [JwtAuthGuard, AuthUseCase, JwtTokenService, PostgresUserRepository],
 })
 export class AuthModule {}

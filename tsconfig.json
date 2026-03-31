@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"],
+      "@database/*": ["src/database/*"],
       "@infrastructure/*": ["src/infrastructure/*"],
       "@modules/*": ["src/modules/*"],
       "@common/*": ["src/common/*"]
