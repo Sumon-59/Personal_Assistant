@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ExpenseModule } from '@modules/expense/expense.module';
 import { UserModule } from '@modules/user/user.module';
+import { ActivityModule } from '@modules/activity/activity.module';
 
 /**
  * Root Application Module
@@ -14,6 +15,7 @@ import { UserModule } from '@modules/user/user.module';
  * - AuthModule: Authentication logic
  * - UserModule: User profile management
  * - ExpenseModule: Expense tracking
+ * - ActivityModule: Activity/usage tracking
  * 
  * Why modules are organized this way:
  * - Each module is self-contained
@@ -29,6 +31,7 @@ import { UserModule } from '@modules/user/user.module';
     }),
     AuthModule,
     UserModule,
+    ActivityModule,
     ExpenseModule,
   ],
   controllers: [],
