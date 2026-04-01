@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Activity, ActivityType } from '../domain/activity.entity';
 import { IActivityRepository } from '../domain/activity.repository.interface';
@@ -41,22 +41,30 @@ export class ActivityUseCase implements IActivityUseCase {
     today.setHours(23, 59, 59, 999);
     
     if (data.date > today) {
-      throw new Error('Activity date cannot be in the future');
+      throw new BadRequestException('Activity date cannot be in the future');
     }
 
-    // Create activity entity (constructor validates business rules)
-    const activity = new Activity(
-      uuidv4(),
-      userId,
-      data.type,
-      data.name,
-      data.duration,
-      data.date,
-      data.note,
-    );
+    try {
+      // Create activity entity (constructor validates business rules)
+      const activity = new Activity(
+        uuidv4(),
+        userId,
+        data.type,
+        data.name,
+        data.duration,
+        data.date,
+        data.note,
+      );
 
-    // Persist to repository
-    return await this.activityRepository.create(activity);
+      // Persist to repository
+      return await this.activityRepository.create(activity);
+    } catch (error) {
+      // Convert domain validation errors to HTTP exceptions
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
   }
 
   /**
@@ -128,14 +136,22 @@ export class ActivityUseCase implements IActivityUseCase {
       today.setHours(23, 59, 59, 999);
       
       if (updates.date > today) {
-        throw new Error('Activity date cannot be in the future');
+        throw new BadRequestException('Activity date cannot be in the future');
       }
     }
 
-    return await this.activityRepository.update(activityId, {
-      ...updates,
-      updatedAt: new Date(),
-    });
+    try {
+      return await this.activityRepository.update(activityId, {
+        ...updates,
+        updatedAt: new Date(),
+      });
+    } catch (error) {
+      // Convert domain validation errors to HTTP exceptions
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
   }
 
   /**
