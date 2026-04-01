@@ -465,9 +465,9 @@ This project is licensed under the **MIT License** - see the LICENSE file for de
 
 ## 👨‍💻 Author
 
-**Md Sumon Hossain**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+**Md.  Sumon Hossain**
+- GitHub: [@Sumon-59](https://github.com/Sumon-59)
+- Email: sumon1907109@gmail.com
 
 ---
 
@@ -486,7 +486,7 @@ This project is licensed under the **MIT License** - see the LICENSE file for de
 
 ## 📞 Support
 
-For support, email your.email@example.com or open an issue in the GitHub repository.
+For support, email sumon1907109@gmail.com or open an issue in the GitHub repository.
 
 ---
 
