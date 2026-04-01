@@ -4,6 +4,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { ExpenseModule } from '@modules/expense/expense.module';
 import { UserModule } from '@modules/user/user.module';
 import { ActivityModule } from '@modules/activity/activity.module';
+import { ReminderModule } from '@modules/reminder/reminder.module';
 
 /**
  * Root Application Module
@@ -16,6 +17,7 @@ import { ActivityModule } from '@modules/activity/activity.module';
  * - UserModule: User profile management
  * - ExpenseModule: Expense tracking
  * - ActivityModule: Activity/usage tracking
+ * - ReminderModule: Reminders with recurrence & notifications
  * 
  * Why modules are organized this way:
  * - Each module is self-contained
@@ -32,6 +34,7 @@ import { ActivityModule } from '@modules/activity/activity.module';
     AuthModule,
     UserModule,
     ActivityModule,
+    ReminderModule,
     ExpenseModule,
   ],
   controllers: [],
