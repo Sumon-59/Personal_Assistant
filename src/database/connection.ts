@@ -15,7 +15,7 @@ import * as schema from './schema';
  * - Typical pool size: 10 connections
  */
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/personal_assistant',
+  connectionString: process.env.DATABASE_URL || 'postgres://nagorik@localhost:5432/personal_assistant',
   max: 10, // Maximum pool size
   min: 2, // Minimum pool size
   idleTimeoutMillis: 30000,

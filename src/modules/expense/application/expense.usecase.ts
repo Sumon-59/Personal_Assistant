@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { Expense, ExpenseCategory } from '../domain/expense.entity';
 import { IExpenseRepository } from '../domain/expense.repository.interface';
 import {
@@ -73,10 +74,10 @@ export class ExpenseUseCase implements IExpenseUseCase {
       );
     }
 
-    // Create expense entity
+    // Create expense entity with generated UUID
     // Entity constructor will validate amount > 0
     const expense = new Expense(
-      undefined as any, // Entity generates ID
+      uuidv4(), // Generate proper UUID
       userId,
       request.amount,
       request.category,
