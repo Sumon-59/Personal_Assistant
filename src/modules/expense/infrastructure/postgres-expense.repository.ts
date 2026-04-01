@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { eq, and, gte, lte, inArray, sum } from 'drizzle-orm';
+import { eq, and, gte, lte, inArray, sum, count } from 'drizzle-orm';
 import { db } from 'src/database/connection';
 import { expenses, DExpense } from 'src/database/schema';
 import { Expense } from '../domain/expense.entity';
@@ -85,10 +85,10 @@ export class PostgresExpenseRepository implements IExpenseRepository {
 
     // Get total count
     const countResult = await db
-      .select({ count: sum(expenses.id) })
+      .select({ total: count(expenses.id) })
       .from(expenses)
       .where(and(...conditions));
-    const total = countResult[0]?.count ? parseInt(countResult[0].count.toString()) : 0;
+    const total = countResult[0]?.total ? parseInt(countResult[0].total.toString()) : 0;
 
     // Apply limit and offset
     const result = await query.orderBy(expenses.date).limit(take).offset(skip);
