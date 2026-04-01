@@ -6,6 +6,8 @@ import { UserModule } from '@modules/user/user.module';
 import { ActivityModule } from '@modules/activity/activity.module';
 import { ReminderModule } from '@modules/reminder/reminder.module';
 import { UsageModule } from '@modules/usage/usage.module';
+import { SubscriptionModule } from '@modules/subscription/subscription.module';
+import { MarketPriceModule } from '@modules/market-price/market-price.module';
 
 /**
  * Root Application Module
@@ -20,6 +22,8 @@ import { UsageModule } from '@modules/usage/usage.module';
  * - ActivityModule: Activity/usage tracking
  * - ReminderModule: Reminders with recurrence & notifications
  * - UsageModule: Usage monitoring and reporting with analytics
+ * - SubscriptionModule: Subscription management with renewals and payment tracking
+ * - MarketPriceModule: Daily market prices with historical tracking and trending
  * 
  * Why modules are organized this way:
  * - Each module is self-contained
@@ -38,6 +42,8 @@ import { UsageModule } from '@modules/usage/usage.module';
     ActivityModule,
     ReminderModule,
     UsageModule,
+    SubscriptionModule,
+    MarketPriceModule,
     ExpenseModule,
   ],
   controllers: [],
