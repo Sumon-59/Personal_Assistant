@@ -9,7 +9,7 @@
 
 > **Production-ready REST API** for personal productivity management. Built with **Clean Architecture + Domain-Driven Design (DDD)**, featuring JWT authentication with HTTP-only cookies, PostgreSQL with Drizzle ORM, interactive API documentation, and comprehensive test coverage.
 
-**Status:** ✅ **ALL PHASES COMPLETE & PRODUCTION READY** (Phase 1, 2, 3)
+**Status:** ✅ **ALL PHASES COMPLETE & PRODUCTION READY** (Phase 1-6)
 
 **Live Documentation:** Access interactive Swagger API docs at `/docs` after running `pnpm start:dev`
 
@@ -68,6 +68,48 @@ pnpm run start:dev
 - Security best practices implemented
 - Zero TypeScript compilation errors
 - Build verified and ready for production deployment
+
+### ✅ Phase 4: Advanced Features & Bug Fixes (Complete)
+- MarketPriceScheduler with `@nestjs/schedule` decorator
+- Fixed NULL handling in database queries with `or(isNull(), lte())`
+- Comprehensive error logging at all application layers
+- Type-safe null coalescing in entity mapping
+- Performance metrics tracking (duration in milliseconds)
+- Graceful error recovery (scheduler continues on failure)
+- Proper ordering with `NULLS FIRST` for stale price detection
+
+### ✅ Phase 5: Database Setup & Local Development (Complete)
+- Drizzle ORM migrations with proper schema evolution
+- PostgreSQL database initialization with test data
+- Market price, subscriptions, and usage tables created
+- Database connection pooling configured (min 2, max 10)
+- Foreign key constraints with CASCADE deletes
+- Proper timezone support for all timestamps
+- Indexed queries for optimal performance
+
+### ✅ Phase 6: Advanced Modules & Schedulers (Complete)
+- **Subscription Management** module with full CRUD and renewal tracking
+  - Track active, expired, and cancelled subscriptions
+  - Auto-renewal preferences with configurable reminders
+  - Multiple payment method support
+  - Billing cycle management (monthly, yearly, quarterly)
+  - Scheduled job to monitor expiring subscriptions (daily 2 AM)
+  
+- **Usage Tracking & Analytics** module
+  - Record daily time spent on apps/websites
+  - Store metadata (OS, browser, device, activity type)
+  - Daily/weekly/monthly abstract report generation
+  - Aggregated statistics and trend analysis
+  - Scheduled jobs for report generation and data cleanup
+  - Optional CSV/JSON export capability
+  
+- **Market Price Scraper** with advanced scheduling
+  - Scrape cryptocurrency prices every 6 hours (BTC, ETH, ADA, DOGE, XRP, SOL, MATIC)
+  - Daily stock price updates at market open (AAPL, MSFT, GOOGL, TSLA, AMZN, META, NFLX)
+  - Commodity price updates twice daily (GOLD, OIL, SILVER, NG)
+  - Stale price detection and auto-update every 4 hours
+  - Error resilience with detailed logging and retry mechanism
+  - Performance tracking for each scraping job
 
 ---
 

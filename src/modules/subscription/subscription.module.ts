@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SubscriptionController } from './presentation/subscription.controller';
 import { SubscriptionUseCase } from './application/subscription.usecase';
 import { PostgresSubscriptionRepository } from './infrastructure/repositories/postgres-subscription.repository';
+import { SubscriptionScheduler } from './infrastructure/scheduler/subscription.scheduler';
 import { AuthModule } from '@modules/auth/auth.module';
 
 /**
@@ -33,6 +34,7 @@ import { AuthModule } from '@modules/auth/auth.module';
   controllers: [SubscriptionController],
   providers: [
     SubscriptionUseCase,
+    SubscriptionScheduler,
     {
       provide: 'SubscriptionRepositoryInterface',
       useClass: PostgresSubscriptionRepository,

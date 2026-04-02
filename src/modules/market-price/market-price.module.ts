@@ -4,6 +4,7 @@ import { MarketPriceUseCase } from './application/market-price.usecase';
 import { PostgresMarketPriceRepository } from './infrastructure/repositories/postgres-market-price.repository';
 import { MarketPriceFetcherService } from './infrastructure/services/market-price-fetcher.service';
 import { MarketPriceScheduler } from './infrastructure/scheduler/market-price.scheduler';
+import { MarketPriceScraperScheduler } from './infrastructure/scheduler/market-price-scraper.scheduler';
 
 /**
  * Market Price Module
@@ -43,6 +44,7 @@ import { MarketPriceScheduler } from './infrastructure/scheduler/market-price.sc
     MarketPriceUseCase,
     MarketPriceFetcherService,
     MarketPriceScheduler,
+    MarketPriceScraperScheduler,
     {
       provide: 'MarketPriceRepositoryInterface',
       useClass: PostgresMarketPriceRepository,

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { eq, desc, gte, lte, and, sql } from 'drizzle-orm';
+import { Injectable, Logger } from '@nestjs/common';
+import { eq, desc, gte, lte, and, sql, or, isNull } from 'drizzle-orm';
 import { db } from 'src/database/connection';
 import { marketPrices, DMarketPrice } from 'src/database/schema';
 import { MarketPrice } from '../../domain/market-price.entity';
@@ -13,6 +13,7 @@ import { MarketPriceRepositoryInterface } from '../../domain/market-price.reposi
  */
 @Injectable()
 export class PostgresMarketPriceRepository implements MarketPriceRepositoryInterface {
+  private readonly logger = new Logger(PostgresMarketPriceRepository.name);
   /**
    * Create or insert market price record
    */
@@ -141,18 +142,63 @@ export class PostgresMarketPriceRepository implements MarketPriceRepositoryInter
 
   /**
    * Get stale prices (not updated in N hours)
+   * 
+   * SQL Logic:
+   * SELECT * FROM market_prices
+   * WHERE lastFetchedAt IS NULL          -- Never fetched (new records)
+   *    OR lastFetchedAt <= threshold   -- Older than N hours
+   * ORDER BY lastFetchedAt ASC NULLS FIRST
+   * 
+   * This ensures:
+   * - NULL values are included first (highest priority)
+   * - Older prices come next
+   * - Avoids SQL NULL comparison issues in Drizzle
    */
   async getStalePrices(hoursThreshold: number): Promise<MarketPrice[]> {
-    const thresholdDate = new Date();
-    thresholdDate.setHours(thresholdDate.getHours() - hoursThreshold);
+    try {
+      // Calculate the threshold timestamp (N hours ago)
+      const thresholdDate = new Date();
+      thresholdDate.setHours(thresholdDate.getHours() - hoursThreshold);
 
-    const result = await db
-      .select()
-      .from(marketPrices)
-      .where(lte(marketPrices.lastFetchedAt, thresholdDate))
-      .orderBy(marketPrices.lastFetchedAt);
+      this.logger.debug(
+        `[getStalePrices] Threshold time: ${thresholdDate.toISOString()}, Hours: ${hoursThreshold}`,
+      );
 
-    return result.map((record) => this.toDomainEntity(record));
+      // Query with proper NULL handling
+      // IMPORTANT: Use OR with isNull() to include NULL values
+      const result = await db
+        .select()
+        .from(marketPrices)
+        .where(
+          or(
+            // Include records that have NEVER been fetched (NULL values)
+            isNull(marketPrices.lastFetchedAt),
+            // Include records last fetched before the threshold
+            lte(marketPrices.lastFetchedAt, thresholdDate),
+          ),
+        )
+        // NULL values first (highest priority), then oldest first
+        .orderBy(sql`${marketPrices.lastFetchedAt} asc nulls first`);
+
+      this.logger.debug(`[getStalePrices] Found ${result.length} stale price records`);
+
+      return result.map((record) => this.toDomainEntity(record));
+    } catch (error) {
+      // Log the full error context for debugging
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(
+        `[getStalePrices] Database query failed with error: ${errorMessage}`,
+        errorStack,
+        { hoursThreshold },
+      );
+
+      // Re-throw with context
+      throw new Error(
+        `Failed to fetch stale prices (threshold: ${hoursThreshold}h): ${errorMessage}`,
+      );
+    }
   }
 
   /**
@@ -232,7 +278,8 @@ export class PostgresMarketPriceRepository implements MarketPriceRepositoryInter
     marketPrice.marketCap = record.marketCap ? parseInt(record.marketCap) : undefined;
     marketPrice.changePercent = record.changePercent ? parseFloat(record.changePercent) : undefined;
     marketPrice.changeAmount = record.changeAmount ? parseFloat(record.changeAmount) : undefined;
-    marketPrice.lastFechedAt = record.lastFetchedAt;
+    // Handle NULL lastFetchedAt: if null, use createdAt or current time (indicates never fetched)
+    marketPrice.lastFechedAt = record.lastFetchedAt || record.createdAt || new Date();
 
     return marketPrice;
   }

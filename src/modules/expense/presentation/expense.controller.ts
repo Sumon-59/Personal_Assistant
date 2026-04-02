@@ -107,8 +107,8 @@ export class ExpenseController {
   @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
   @ApiQuery({ name: 'category', type: String, required: false })
-  @ApiQuery({ name: 'startDate', type: String, required: false, format: 'date-time' })
-  @ApiQuery({ name: 'endDate', type: String, required: false, format: 'date-time' })
+  @ApiQuery({ name: 'startDate', type: String, required: false, description: 'ISO 8601 format (YYYY-MM-DD)' })
+  @ApiQuery({ name: 'endDate', type: String, required: false, description: 'ISO 8601 format (YYYY-MM-DD)' })
   @ApiResponse({ status: 200, description: 'Expenses retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getExpenses(
@@ -143,8 +143,8 @@ export class ExpenseController {
   @Get('summary')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get expense summary by date range and category' })
-  @ApiQuery({ name: 'startDate', type: String, required: false, format: 'date-time' })
-  @ApiQuery({ name: 'endDate', type: String, required: false, format: 'date-time' })
+  @ApiQuery({ name: 'startDate', type: String, required: false, description: 'ISO 8601 format (YYYY-MM-DD)' })
+  @ApiQuery({ name: 'endDate', type: String, required: false, description: 'ISO 8601 format (YYYY-MM-DD)' })
   @ApiResponse({ status: 200, description: 'Summary retrieved successfully', type: ExpenseSummaryDto })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getSummary(

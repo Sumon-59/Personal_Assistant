@@ -118,7 +118,7 @@ async function bootstrap() {
 
   console.log(`
 ╔════════════════════════════════════════════════════════════╗
-║           🚀 Personal Assistant API Running               ║
+║           🚀 Personal Assistant API Running                ║
 ╠════════════════════════════════════════════════════════════╣
 ║  Endpoint:      http://localhost:${port}/${apiPrefix}
 ║  Environment:   ${configService.get<string>('NODE_ENV', 'development')}

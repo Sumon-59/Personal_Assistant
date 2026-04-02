@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsageController } from './presentation/usage.controller';
 import { UsageUseCase } from './application/usage.usecase';
 import { PostgresUsageRepository } from './infrastructure/repositories/postgres-usage.repository';
+import { UsageScheduler } from './infrastructure/scheduler/usage.scheduler';
 import { AuthModule } from '@modules/auth/auth.module';
 
 /**
@@ -38,6 +39,7 @@ import { AuthModule } from '@modules/auth/auth.module';
   controllers: [UsageController],
   providers: [
     UsageUseCase,
+    UsageScheduler,
     {
       provide: 'UsageRepositoryInterface',
       useClass: PostgresUsageRepository,

@@ -31,11 +31,11 @@ export const marketPrices = pgTable(
     // Metadata
     currency: varchar('currency', { length: 3 }).notNull().default('USD'), // ISO 4217
     source: varchar('source', { length: 50 }).notNull(), // Data source: 'coinbase', 'alpha_vantage', 'yahoo_finance', etc
-    lastFetchedAt: timestamp('last_fetched_at').notNull(),
+    lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }), // Nullable: allows stale price detection on new records
 
     // Timestamps
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes for common queries

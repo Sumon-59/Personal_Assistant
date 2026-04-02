@@ -69,24 +69,52 @@ export class MarketPriceScheduler implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Execute price update task
+   *
+   * Called periodically by setInterval or manually via manualTriggerUpdate()
+   * Includes comprehensive error handling and logging
    */
   private async runPriceUpdate(): Promise<void> {
+    const startTime = Date.now();
+
     try {
-      this.logger.log('📊 Starting market price updates...');
+      this.logger.log('📊 [Scheduler] Starting market price updates...');
 
-      // Update all stale prices
-      const updated = await this.marketPriceUseCase.updateAllStalePrices(24);
+      // Update all stale prices (threshold: 24 hours)
+      const STALE_THRESHOLD_HOURS = 24;
+      const updated = await this.marketPriceUseCase.updateAllStalePrices(STALE_THRESHOLD_HOURS);
 
-      this.logger.log(`✅ Updated ${updated.length} market prices`);
+      const duration = Date.now() - startTime;
+      this.logger.log(
+        `✅ [Scheduler] Updated ${updated.length} market prices in ${duration}ms`,
+      );
 
-      // Log updated symbols
+      // Log updated symbols with details
       if (updated.length > 0) {
-        const symbols = updated.map((p) => `${p.symbol}:$${p.priceUSD}`).join(', ');
-        this.logger.log(`Updated prices: ${symbols}`);
+        const priceDetails = updated
+          .map(
+            (p) =>
+              `${p.symbol}:$${p.priceUSD}${p.changePercent ? ` (${p.changePercent}%)` : ''}`,
+          )
+          .join(', ');
+        this.logger.debug(`[Scheduler] Updated prices: ${priceDetails}`);
+      } else {
+        this.logger.log('[Scheduler] No stale prices found - all prices are current');
       }
     } catch (error) {
-      this.logger.error('❌ Error updating market prices:', error);
-      // Continue on error - scheduler will retry next cycle
+      const duration = Date.now() - startTime;
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(
+        `❌ [Scheduler] Error updating market prices after ${duration}ms: ${errorMsg}`,
+        errorStack,
+      );
+
+      // NOTE: We do NOT re-throw here - scheduler continues on error
+      // The failed cycle will be retried in the next scheduled interval
+      this.logger.log(
+        '[Scheduler] Scheduler will retry on next cycle (every 24 hours)',
+      );
     }
   }
 

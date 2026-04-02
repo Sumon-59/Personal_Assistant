@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ExpenseModule } from '@modules/expense/expense.module';
 import { UserModule } from '@modules/user/user.module';
@@ -37,6 +38,7 @@ import { MarketPriceModule } from '@modules/market-price/market-price.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UserModule,
     ActivityModule,
