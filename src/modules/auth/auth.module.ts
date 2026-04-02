@@ -5,8 +5,15 @@ import { AuthController } from './presentation/auth.controller';
 import { AuthUseCase } from './application/auth.usecase';
 import { JwtTokenService } from './infrastructure/jwt-token.service';
 import { PostgresUserRepository } from './infrastructure/postgres-user.repository';
+import { PostgresPremiumCodeRepository } from './infrastructure/repositories/postgres-premium-code.repository';
 import { JwtStrategy } from './infrastructure/jwt.strategy';
 import { JwtAuthGuard } from './infrastructure/jwt-auth.guard';
+import { FirebaseStrategy } from './infrastructure/firebase.strategy';
+import { FirebaseAuthGuard } from './infrastructure/firebase-auth.guard';
+import { FirebaseAuthService } from './infrastructure/firebase-auth.service';
+import { GuestAuthService } from './infrastructure/guest-auth.service';
+import { OptionalJwtAuthGuard } from './infrastructure/optional-jwt-auth.guard';
+import { CookieService } from './infrastructure/cookie.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 /**
@@ -17,8 +24,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
  * Structure:
  * - Controllers: HTTP entry points
  * - Services: Business logic (use cases)
- * - Infrastructure: Database, JWT, external services
+ * - Infrastructure: Database, JWT, external services, guards
  * - Domain: Entities and interfaces
+ * 
+ * Authentication Methods:
+ * - Email/Password (traditional)
+ * - Firebase ID tokens
+ * - Premium codes
+ * - Guest sessions
  * 
  * WHY modules:
  * - Encapsulation: Auth logic is self-contained
@@ -27,9 +40,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
  * - Scalability: Easy to add more features to auth
  * 
  * Dependency Injection:
- * - AuthUseCase depends on IUserRepository and ITokenService
- * - We provide implementations: InMemoryUserRepository, JwtTokenService
- * - In future, can swap implementations without changing use case
+ * - AuthUseCase depends on repositories and services
+ * - Controllers use AuthUseCase and CookieService
+ * - Multi-strategy passport setup
  */
 @Module({
   imports: [
@@ -48,12 +61,38 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   controllers: [AuthController],
   providers: [
+    // Use Cases
+    AuthUseCase,
+
+    // Services
+    JwtTokenService,
+    FirebaseAuthService,
+    GuestAuthService,
+    CookieService,
+
+    // Repositories
+    PostgresUserRepository,
+    PostgresPremiumCodeRepository,
+
+    // Strategies
+    JwtStrategy,
+    FirebaseStrategy,
+
+    // Guards
+    JwtAuthGuard,
+    FirebaseAuthGuard,
+    OptionalJwtAuthGuard,
+  ],
+  exports: [
     AuthUseCase,
     JwtTokenService,
-    JwtStrategy,
+    FirebaseAuthService,
+    GuestAuthService,
+    CookieService,
     JwtAuthGuard,
+    FirebaseAuthGuard,
+    OptionalJwtAuthGuard,
     PostgresUserRepository,
   ],
-  exports: [JwtAuthGuard, AuthUseCase, JwtTokenService, PostgresUserRepository],
 })
 export class AuthModule {}

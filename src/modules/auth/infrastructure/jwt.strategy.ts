@@ -3,15 +3,20 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@core/exceptions/exceptions';
+import { Request } from 'express';
 
 /**
  * JWT Strategy for Passport
  * 
  * This strategy tells Passport how to validate JWT tokens.
  * Steps:
- * 1. Extract token from request (from Authorization header)
+ * 1. Extract token from request (from Authorization header OR cookies)
  * 2. Verify signature using secret
  * 3. If valid, extract payload and attach to request.user
+ * 
+ * Token extraction priority:
+ * 1. HTTP-only cookie (most secure)
+ * 2. Authorization header Bearer token (fallback)
  * 
  * WHY Passport:
  * - Standard authentication library for Node.js
@@ -25,7 +30,15 @@ import { UnauthorizedException } from '@core/exceptions/exceptions';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        // Priority 1: Extract from HTTP-only cookie (most secure)
+        (req: Request) => {
+          const token = (req as any).cookies?.accessToken;
+          return token || null;
+        },
+        // Priority 2: Extract from Authorization header Bearer token
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_SECRET'),
     });

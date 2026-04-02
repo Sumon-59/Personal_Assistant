@@ -11,6 +11,7 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { ExpenseUseCase } from '../application/expense.usecase';
 import {
   CreateExpenseDto,
@@ -53,6 +54,8 @@ import { CurrentUser } from '@core/utils/current-user.decorator';
  * 
  * NOTE: /summary must come BEFORE /:id in code (NestJS routing order)
  */
+@ApiTags('Expenses')
+@ApiBearerAuth('accent-token')
 @Controller('expenses')
 @UseGuards(JwtAuthGuard) // All routes require authentication
 export class ExpenseController {
@@ -69,6 +72,10 @@ export class ExpenseController {
    */
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create new expense' })
+  @ApiResponse({ status: 201, description: 'Expense created successfully', type: ExpenseResponseDto })
+  @ApiResponse({ status: 400, description: 'Invalid amount or category' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async createExpense(
     @CurrentUser() userId: string,
     @Body() createExpenseDto: CreateExpenseDto,
@@ -96,6 +103,14 @@ export class ExpenseController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'List expenses with pagination and filtering' })
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  @ApiQuery({ name: 'category', type: String, required: false })
+  @ApiQuery({ name: 'startDate', type: String, required: false, format: 'date-time' })
+  @ApiQuery({ name: 'endDate', type: String, required: false, format: 'date-time' })
+  @ApiResponse({ status: 200, description: 'Expenses retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getExpenses(
     @CurrentUser() userId: string,
     @Query() query: GetExpensesQueryDto,
@@ -127,17 +142,16 @@ export class ExpenseController {
    */
   @Get('summary')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get expense summary by date range and category' })
+  @ApiQuery({ name: 'startDate', type: String, required: false, format: 'date-time' })
+  @ApiQuery({ name: 'endDate', type: String, required: false, format: 'date-time' })
+  @ApiResponse({ status: 200, description: 'Summary retrieved successfully', type: ExpenseSummaryDto })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getSummary(
     @CurrentUser() userId: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ): Promise<any> {
-    console.log('getSummary called with userId:', userId);
-    
-    if (!userId) {
-      console.error('userId is null or undefine      GET http://localhost:3000/api/v1/expenses?category=FOODd in getSummary');
-    }
-    
     // Convert ISO strings to Date objects if provided
     const start = startDate ? new Date(startDate) : undefined;
     const end = endDate ? new Date(endDate) : undefined;
@@ -168,6 +182,11 @@ export class ExpenseController {
    */
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update expense' })
+  @ApiParam({ name: 'id', type: String, format: 'uuid', description: 'Expense ID' })
+  @ApiResponse({ status: 200, description: 'Expense updated successfully', type: ExpenseResponseDto })
+  @ApiResponse({ status: 404, description: 'Expense not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async updateExpense(
     @CurrentUser() userId: string,
     @Param('id') expenseId: string,
@@ -199,6 +218,11 @@ export class ExpenseController {
    */
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Delete expense' })
+  @ApiParam({ name: 'id', type: String, format: 'uuid', description: 'Expense ID' })
+  @ApiResponse({ status: 200, description: 'Expense deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Expense not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async deleteExpense(
     @CurrentUser() userId: string,
     @Param('id') expenseId: string,
